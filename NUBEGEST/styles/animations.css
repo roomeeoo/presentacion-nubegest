@@ -1,0 +1,224 @@
+/*
+  Cada diapositiva tiene tres partes:
+  1. la entrada de la propia sección (cómo se abre paso sobre la anterior),
+  2. la coreografía de sus elementos,
+  3. la salida, que se ve por debajo mientras entra la siguiente.
+  La diapositiva activa lleva .is-active y la saliente .is-leaving (ver scripts/navigation.js).
+*/
+
+/* ── Movimientos compartidos ───────────────────────── */
+@keyframes line-rise { from { transform: translateY(108%); } }
+@keyframes fade-rise { from { opacity: 0; transform: translateY(2cqw); filter: blur(.35cqw); } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes grow-x { from { transform: scaleX(0); } }
+@keyframes grow-y { from { transform: scaleY(0); } }
+@keyframes draw { from { stroke-dashoffset: 1; } }
+@keyframes write { from { clip-path: inset(-20% 100% -20% -5%); } to { clip-path: inset(-20% -5% -20% -5%); } }
+@keyframes pop { from { transform: scale(0); } 70% { transform: scale(1.25); } }
+@keyframes tracking-in { from { opacity: 0; letter-spacing: .7em; } }
+@keyframes lift-out { to { opacity: 0; transform: translateY(-3cqw); filter: blur(.3cqw); } }
+@keyframes drop-out { to { opacity: 0; transform: translateY(5cqw); } }
+@keyframes breathe { to { transform: scale(1.1); } }
+
+.slide.is-active .mask > * { animation: line-rise 1s var(--ease-out) both; animation-delay: calc(var(--at, .45s) + var(--line, 0) * .12s); }
+.slide.is-active .mask:nth-of-type(2) > * { --line: 1; }
+.slide.is-active .slide__header .eyebrow,
+.slide.is-active > .eyebrow { animation: tracking-in 1s var(--ease-out) .3s both; }
+.slide.is-active .slide__subtitle { animation: fade-rise .9s var(--ease-out) .8s both; }
+.slide.is-active .hand { animation: write 1.4s cubic-bezier(.45, .05, .4, 1) var(--write-at, 2s) both; }
+.slide.is-leaving .slide__header,
+.slide.is-leaving .hand { animation: lift-out .55s ease-in both; }
+
+.deck__seam.is-sweeping { animation: seam-sweep .95s var(--ease-in-out) both; }
+.deck[data-direction="backward"] .deck__seam.is-sweeping { animation-name: seam-sweep-back; }
+@keyframes seam-sweep { from { opacity: 1; transform: translateX(110cqw); } 85% { opacity: 1; } to { opacity: 0; transform: translateX(-20cqw); } }
+@keyframes seam-sweep-back { from { opacity: 1; transform: translateX(-20cqw); } 85% { opacity: 1; } to { opacity: 0; transform: translateX(110cqw); } }
+
+
+/* ── 1 · Planteamiento: la foto se descorre, el título emerge y se subraya a mano ── */
+.cover.is-active { animation: cover-open 1.1s var(--ease-in-out) both; }
+@keyframes cover-open { from { clip-path: circle(0% at 72% 50%); } to { clip-path: circle(150% at 72% 50%); } }
+
+.cover.is-active .cover__photo { animation: unveil-left 1.4s var(--ease-in-out) .15s both; }
+@keyframes unveil-left { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } }
+.cover.is-active .cover__photo img { animation: photo-settle 2.8s var(--ease-out) both, breathe 20s ease-in-out 2.8s infinite alternate; }
+@keyframes photo-settle { from { transform: scale(1.32); filter: saturate(.9) contrast(1.05) sepia(.12) brightness(.45); } to { transform: scale(1); } }
+.cover.is-active .cover__photo::after { animation: light-sweep 2.4s ease-in-out 1.3s both; }
+@keyframes light-sweep { from { translate: -100% 0; } to { translate: 100% 0; } }
+
+.cover.is-active .cover__content > .eyebrow { animation: tracking-in 1.1s var(--ease-out) .35s both; }
+.cover.is-active .cover__title { --at: .5s; }
+.cover.is-active .ink--circle path { animation: draw 1.1s cubic-bezier(.5, 0, .3, 1) 1.25s both; }
+.cover.is-active .cover__lead { animation: fade-rise 1s var(--ease-out) 1.05s both; }
+.cover.is-active .facts div { animation: fade-rise .8s var(--ease-out) both; animation-delay: calc(1.3s + var(--n) * .12s); }
+.cover.is-active .facts div::before { animation: grow-y .6s var(--ease-out) both; animation-delay: calc(1.45s + var(--n) * .12s); }
+.facts div:nth-child(1) { --n: 0; } .facts div:nth-child(2) { --n: 1; } .facts div:nth-child(3) { --n: 2; }
+.cover.is-active .cover__team { animation: fade-in .6s ease 1.7s both; }
+.cover.is-active .cover__team-line { animation: grow-x 1.2s var(--ease-in-out) 1.8s both; }
+
+.cover.is-leaving .cover__photo img { animation: push-through .8s ease-in both; }
+@keyframes push-through { to { transform: scale(1.45); filter: blur(.5cqw) brightness(.5); } }
+.cover.is-leaving .cover__content,
+.cover.is-leaving .cover__team { animation: lift-out .55s ease-in both; }
+
+
+/* ── 2 · ASG: corte diagonal en papel, la foto cae sobre la mesa, las tres columnas se levantan ── */
+.asg.is-active { animation: diagonal-in 1s var(--ease-in-out) both; }
+.deck[data-direction="backward"] .asg.is-active { animation-name: diagonal-in-back; }
+@keyframes diagonal-in { from { clip-path: polygon(125% 0, 125% 0, 100% 100%, 100% 100%); } to { clip-path: polygon(0 0, 125% 0, 100% 100%, -25% 100%); } }
+@keyframes diagonal-in-back { from { clip-path: polygon(0 0, 0 0, -25% 100%, -25% 100%); } to { clip-path: polygon(0 0, 125% 0, 100% 100%, -25% 100%); } }
+
+.asg.is-active .asg__print { animation: print-drop 1.1s var(--ease-settle) .7s both; }
+@keyframes print-drop { from { opacity: 0; translate: 6cqw -38cqw; rotate: -16deg; scale: 1.15; } 40% { opacity: 1; } }
+.asg.is-active .print__tape { animation: tape-stick .45s var(--ease-out) 1.55s both; }
+@keyframes tape-stick { from { opacity: 0; transform: scaleX(.2) translateY(-1cqw); } }
+.asg.is-active figcaption { animation: write 1.1s ease-out 1.75s both; }
+
+.pillar:nth-child(1) { --n: 0; } .pillar:nth-child(2) { --n: 1; } .pillar:nth-child(3) { --n: 2; }
+.asg.is-active .pillar::before { animation: grow-x .9s var(--ease-in-out) both; animation-delay: calc(.95s + var(--n) * .15s); }
+.asg.is-active .pillar::after { animation: ghost-letter 1.8s var(--ease-out) both; animation-delay: calc(1.05s + var(--n) * .15s); }
+@keyframes ghost-letter { from { opacity: 0; transform: translateY(4cqw) scale(.9); } }
+.asg.is-active .pillar h3 { animation: fade-rise .8s var(--ease-out) both; animation-delay: calc(1.1s + var(--n) * .15s); }
+.asg.is-active .evidence { animation: fade-rise .8s var(--ease-out) both; animation-delay: calc(1.35s + var(--n) * .15s); }
+.asg.is-active .evidence--gap { animation-delay: calc(1.65s + var(--n) * .15s); }
+.asg.is-active .evidence::before { animation: grow-y .7s var(--ease-out) both; animation-delay: inherit; }
+.asg.is-active .pillar__verdict { animation: fade-rise .8s var(--ease-out) both; animation-delay: calc(2s + var(--n) * .15s); }
+
+.asg.is-leaving .pillar { animation: drop-out .6s ease-in both; animation-delay: calc(var(--n) * .06s); }
+.asg.is-leaving .asg__print { animation: print-away .7s ease-in both; }
+@keyframes print-away { to { opacity: 0; translate: 20cqw -6cqw; rotate: 14deg; } }
+
+
+/* ── 3 · Stakeholders: se abre como un párpado y las tres fotos se reparten desde un mazo ── */
+.stakeholders.is-active { animation: eyelid-open 1s var(--ease-in-out) both; }
+@keyframes eyelid-open { from { clip-path: inset(50% 0 50% 0); filter: brightness(2); } to { clip-path: inset(0); } }
+
+.person:nth-child(1) { --n: 0; --from-x: 30.6cqw; --from-rot: -9deg; }
+.person:nth-child(2) { --n: 1; --from-x: 0cqw; --from-rot: 6deg; }
+.person:nth-child(3) { --n: 2; --from-x: -30.6cqw; --from-rot: 11deg; }
+.stakeholders.is-active .person__print { animation: deal 1.15s var(--ease-out) both; animation-delay: calc(.7s + (2 - var(--n)) * .1s); }
+@keyframes deal {
+  from { opacity: 0; translate: var(--from-x) 6cqw; rotate: var(--from-rot); scale: .8; }
+  25% { opacity: 1; }
+}
+.stakeholders.is-active .person h3,
+.stakeholders.is-active .person__role { animation: fade-rise .8s var(--ease-out) both; animation-delay: calc(1.5s + var(--n) * .14s); }
+.stakeholders.is-active .person p:last-child { animation: fade-rise .9s var(--ease-out) both; animation-delay: calc(1.65s + var(--n) * .14s); }
+.stakeholders.is-active .stakeholders__thread path { animation: draw 1.3s var(--ease-in-out) 1.55s both; }
+.stakeholders__thread circle { transform-box: fill-box; transform-origin: center; }
+.stakeholders.is-active .stakeholders__thread circle { animation: pop .45s var(--ease-out) both; }
+.stakeholders.is-active .stakeholders__thread circle:nth-of-type(1) { animation-delay: 1.55s; }
+.stakeholders.is-active .stakeholders__thread circle:nth-of-type(2) { animation-delay: 2.15s; }
+.stakeholders.is-active .stakeholders__thread circle:nth-of-type(3) { animation-delay: 2.75s; }
+.stakeholders { --write-at: 2.6s; }
+
+.stakeholders.is-leaving .person { animation: gather-out .7s ease-in both; }
+@keyframes gather-out { to { opacity: 0; translate: var(--from-x) -2cqw; scale: .75; } }
+.stakeholders.is-leaving .stakeholders__thread { animation: fade-out .3s ease-in both; }
+@keyframes fade-out { to { opacity: 0; } }
+
+
+/* ── 4 · Propuesta: un iris se abre desde la foto, la línea de tiempo se dibuja paso a paso ── */
+.proposal.is-active { animation: iris-corner 1.05s var(--ease-in-out) both; }
+@keyframes iris-corner { from { clip-path: circle(0% at 84% 15%); } to { clip-path: circle(150% at 84% 15%); } }
+
+.proposal.is-active .proposal__print { animation: print-slide 1.1s var(--ease-settle) .55s both; }
+@keyframes print-slide { from { opacity: 0; translate: 3cqw -24cqw; rotate: -12deg; } 35% { opacity: 1; } }
+.proposal.is-active .print__tape { animation: tape-stick .45s var(--ease-out) 1.4s both; }
+.proposal.is-active figcaption { animation: write 1s ease-out 1.6s both; }
+
+.steps li:nth-child(1) { --n: 0; } .steps li:nth-child(2) { --n: 1; } .steps li:nth-child(3) { --n: 2; }
+.steps li:nth-child(4) { --n: 3; } .steps li:nth-child(5) { --n: 4; }
+.proposal.is-active .steps::before { animation: grow-y 1.7s var(--ease-in-out) .85s both; }
+.proposal.is-active .steps li { animation: step-in .75s var(--ease-out) both; animation-delay: calc(.95s + var(--n) * .3s); }
+@keyframes step-in { from { opacity: 0; transform: translateX(-2.2cqw); } }
+.proposal.is-active .steps li::before { animation: pop .5s var(--ease-out) both; animation-delay: calc(.9s + var(--n) * .3s); }
+
+.proposal.is-active .ods { animation: ods-rise 1.1s var(--ease-out) 1.15s both; }
+@keyframes ods-rise { from { opacity: 0; transform: translateY(5cqw) rotateX(32deg); } }
+.proposal.is-active .ods__badge b { animation: badge-flip .9s var(--ease-settle) 1.75s both; }
+@keyframes badge-flip { from { transform: rotateY(-90deg); } }
+.proposal.is-active .ods__badge span { animation: fade-rise .7s var(--ease-out) 1.9s both; }
+.proposal.is-active .ods__goal { --at: 2.05s; }
+.proposal.is-active .ods__link { animation: fade-rise .8s var(--ease-out) 2.4s both; }
+.proposal.is-active .ods__source { animation: fade-in .8s ease 2.7s both; }
+
+.proposal.is-leaving .steps::before { animation: retract .55s ease-in both; }
+@keyframes retract { to { transform: scaleY(0); transform-origin: bottom; } }
+.proposal.is-leaving .steps li { animation: fade-out .4s ease-in both; animation-delay: calc((4 - var(--n)) * .05s); }
+.proposal.is-leaving .ods { animation: ods-away .65s ease-in both; }
+@keyframes ods-away { to { opacity: 0; transform: translateY(-4cqw) rotateX(-28deg); } }
+.proposal.is-leaving .proposal__print { animation: print-away .6s ease-in both; }
+
+
+/* ── 5 · Indicador: entramos a través de la imagen y la unidad se compone letra a letra ── */
+.indicator.is-active { animation: zoom-through 1.05s var(--ease-out) both; }
+@keyframes zoom-through { from { opacity: 0; transform: scale(1.35); filter: blur(1cqw); } }
+
+.indicator.is-active .indicator__backdrop img { animation: backdrop-pull 3.2s var(--ease-out) both, breathe 24s ease-in-out 3.2s infinite alternate; }
+@keyframes backdrop-pull { from { transform: scale(1.4); } to { transform: scale(1); } }
+
+.metric__unit span:nth-child(1) { --n: 0; } .metric__unit span:nth-child(2) { --n: 1; } .metric__unit span:nth-child(3) { --n: 2; }
+.metric__unit span:nth-child(4) { --n: 3; } .metric__unit span:nth-child(5) { --n: 4; } .metric__unit span:nth-child(6) { --n: 5; }
+.metric__unit span:nth-child(7) { --n: 6; }
+.indicator.is-active .metric__unit span { animation: glyph-drop .9s var(--ease-out) both; animation-delay: calc(.55s + var(--n) * .07s); transform-origin: 50% 0; }
+@keyframes glyph-drop { from { opacity: 0; transform: translateY(-.35em) rotateX(85deg); filter: blur(.4cqw); } }
+.indicator.is-active .metric__slash { animation: slash-cut .6s var(--ease-out) .8s both; }
+@keyframes slash-cut { from { opacity: 0; transform: scaleY(0) skewX(-20deg); } }
+.indicator.is-active .metric__label { animation: fade-rise .9s var(--ease-out) 1.05s both; }
+.indicator { --write-at: 1.5s; }
+
+.indicator.is-active .compare { animation: fade-in .6s ease 1.15s both; }
+.indicator.is-active .compare::after { animation: grow-y .7s var(--ease-in-out) 1.2s both; }
+.indicator.is-active .compare__side--known { animation: open-from-center .9s var(--ease-in-out) 1.45s both; }
+.indicator.is-active .compare__side--missing { animation: open-from-center-right .9s var(--ease-in-out) 1.45s both; }
+@keyframes open-from-center { from { clip-path: inset(0 0 0 100%); transform: translateX(2cqw); } to { clip-path: inset(0); } }
+@keyframes open-from-center-right { from { clip-path: inset(0 100% 0 0); transform: translateX(-2cqw); } to { clip-path: inset(0); } }
+
+.criteria div:nth-child(1) { --n: 0; } .criteria div:nth-child(2) { --n: 1; } .criteria div:nth-child(3) { --n: 2; }
+.indicator.is-active .criteria div::before { animation: grow-x .8s var(--ease-in-out) both; animation-delay: calc(1.95s + var(--n) * .15s); }
+.indicator.is-active .criteria div { animation: fade-rise .8s var(--ease-out) both; animation-delay: calc(2.05s + var(--n) * .15s); }
+
+.indicator.is-leaving { animation: recede .8s ease-in both; }
+@keyframes recede { to { transform: scale(.86); filter: brightness(.3); } }
+
+
+/* ── 6 · Decisión: la página sube, la luz verde se enciende y la frase final cierra con firma ── */
+.closing.is-active { animation: page-up 1s var(--ease-in-out) both; }
+.deck[data-direction="backward"] .closing.is-active { animation-name: page-down; }
+@keyframes page-up { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
+@keyframes page-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+
+.closing.is-active .closing__photo { animation: photo-iris 1.4s var(--ease-in-out) .55s both; }
+@keyframes photo-iris { from { clip-path: circle(0% at 55% 45%); } to { clip-path: circle(85% at 55% 45%); } }
+.closing.is-active .closing__photo img { animation: photo-settle 2.6s var(--ease-out) .55s both, glow 5s ease-in-out 3.2s infinite alternate; }
+@keyframes glow { to { filter: saturate(1.15) contrast(1.05) sepia(.08) brightness(1.18); } }
+
+.closing__facts div:nth-child(1) { --n: 0; } .closing__facts div:nth-child(2) { --n: 1; } .closing__facts div:nth-child(3) { --n: 2; }
+.closing.is-active .closing__content > .eyebrow { animation: tracking-in 1s var(--ease-out) .45s both; }
+.closing.is-active .closing__facts div::before { animation: grow-x .8s var(--ease-in-out) both; animation-delay: calc(.65s + var(--n) * .14s); }
+.closing.is-active .closing__facts div { animation: fade-rise .8s var(--ease-out) both; animation-delay: calc(.75s + var(--n) * .14s); }
+.closing.is-active .verdict .evidence { animation: fade-rise .85s var(--ease-out) 1.2s both; }
+.closing.is-active .verdict .evidence--gap { animation-delay: 1.4s; }
+.closing.is-active .verdict .evidence::before { animation: grow-y .8s var(--ease-out) both; animation-delay: inherit; }
+
+.closing.is-active .finale { animation: band-rise 1s var(--ease-in-out) 1.6s both; }
+@keyframes band-rise { from { transform: translateY(100%); } }
+.closing.is-active .finale__claim { --at: 2.1s; }
+.closing.is-active .ink--underline path { animation: draw .9s cubic-bezier(.5, 0, .3, 1) 2.75s both; }
+.closing.is-active .finale__meta { animation: fade-in .8s ease 2.8s both; }
+
+.closing.is-leaving .finale { animation: band-drop .6s ease-in both; }
+@keyframes band-drop { to { transform: translateY(100%); } }
+.closing.is-leaving .closing__content,
+.closing.is-leaving .closing__photo { animation: fade-out .5s ease-in both; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide *, .slide *::before, .slide *::after, .deck__seam {
+    animation-duration: .01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+  }
+  .slide.is-active { animation: fade-in .35s ease both !important; }
+}
