@@ -1,0 +1,141 @@
+/* Fuentes locales (licencia SIL OFL, ver assets/fonts) */
+@font-face { font-family: "Source Serif 4"; src: url("../assets/fonts/source-serif-4-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("../assets/fonts/source-serif-4-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("../assets/fonts/source-serif-4-500-italic.woff2") format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
+@font-face { font-family: "Source Sans 3"; src: url("../assets/fonts/source-sans-3-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Source Sans 3"; src: url("../assets/fonts/source-sans-3-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("../assets/fonts/barlow-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("../assets/fonts/barlow-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Caveat"; src: url("../assets/fonts/caveat-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+
+:root {
+  --night: #141210;
+  --night-raised: rgb(20 18 16 / .78);
+  --paper: #f4efe7;
+  --paper-line: #d3cbbf;
+  --ink: #1b1916;
+  --ink-soft: #5a544c;
+  --snow: #f6f1ea;
+  --snow-soft: #b4ab9f;
+  --snow-body: #ddd4c8;
+  --accent: #e5603a;
+  --fact: #2f5fd0;
+  --fact-on-dark: #8fb0ff;
+  --ods-gold: #bf8b2e;
+
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --label: "Barlow", "Segoe UI", sans-serif;
+  --hand: "Caveat", "Segoe Print", cursive;
+
+  --ease-out: cubic-bezier(.16, .84, .3, 1);
+  --ease-in-out: cubic-bezier(.76, 0, .24, 1);
+  --ease-settle: cubic-bezier(.34, 1.36, .5, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; overflow: hidden; background: #000; }
+body { font-family: var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+h1, h2, h3, p, dl, dd, ol, figure, blockquote { margin: 0; padding: 0; }
+img { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+
+/* El escenario es siempre 16:9; todo lo de dentro se mide en cqw (1cqw = 1/100 del ancho). */
+.deck {
+  /* Escala tipográfica del escenario */
+  --pad-x: 6.25cqw;
+  --pad-top: 5cqw;
+  --fs-eyebrow: .9cqw;
+  --fs-body: 1.2cqw;
+  --fs-small: .78cqw;
+  --fs-title: 4.6cqw;
+  --fs-heading: 2.1cqw;
+  --fs-hand: 1.45cqw;
+
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(100vw, 100dvh * 16 / 9);
+  height: min(100dvh, 100vw * 9 / 16);
+  container-type: size;
+  overflow: hidden;
+  background: var(--night);
+  perspective: 120cqw;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  padding: var(--pad-top) var(--pad-x);
+  overflow: hidden;
+  visibility: hidden;
+}
+.slide.is-active { visibility: visible; z-index: 2; }
+.slide.is-leaving { visibility: visible; z-index: 1; }
+
+.cover, .stakeholders, .indicator { background: var(--night); color: var(--snow); }
+.asg, .proposal, .closing { background: var(--paper); color: var(--ink); }
+
+/* Piezas compartidas */
+.eyebrow { font: 600 var(--fs-eyebrow)/1 var(--label); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); }
+.cover .eyebrow, .stakeholders .eyebrow, .indicator .eyebrow { color: var(--snow-soft); }
+.eyebrow .dot { color: var(--accent); }
+
+.slide__title { font: 500 var(--fs-title)/1 var(--serif); letter-spacing: -.015em; margin-top: 1.15cqw; }
+.slide__subtitle { font: italic 500 1.56cqw/1.35 var(--serif); color: var(--ink-soft); margin-top: 1.15cqw; }
+
+/* Una línea de texto que entra desde detrás de su propia máscara */
+.mask { display: block; overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; }
+.mask > * { display: block; }
+
+.hand { font: 500 var(--fs-hand)/1.25 var(--hand); color: var(--accent); }
+
+.ink { position: absolute; overflow: visible; pointer-events: none; }
+.ink path { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+
+/* Foto impresa con marco y cinta */
+.print { position: absolute; background: #fff; padding: .73cqw .73cqw 0; box-shadow: 0 .94cqw 2.1cqw rgb(0 0 0 / .28), 0 .1cqw .3cqw rgb(0 0 0 / .2); rotate: var(--tilt, 0deg); }
+.print img { width: 100%; object-fit: cover; filter: saturate(.9) contrast(1.04) sepia(.1); }
+.print figcaption { font: 500 1.15cqw/1.2 var(--hand); color: #3a352f; padding: .5cqw .2cqw .65cqw; }
+.print__tape { position: absolute; top: -.85cqw; left: 50%; width: 6.25cqw; height: 1.77cqw; margin-left: -3.1cqw; background: rgb(240 228 200 / .75); rotate: -3deg; box-shadow: 0 .05cqw .15cqw rgb(0 0 0 / .12); z-index: 1; }
+
+/* Hecho del caso / pendiente o riesgo */
+.evidence { position: relative; padding-left: 1.05cqw; }
+.evidence::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; transform-origin: top; }
+.evidence--fact::before { background: var(--fact); }
+.evidence--gap::before { background: repeating-linear-gradient(to bottom, var(--accent) 0 .32cqw, transparent .32cqw .55cqw); }
+.evidence__tag { display: block; font: 600 .78cqw/1 var(--label); letter-spacing: .2em; text-transform: uppercase; margin-bottom: .52cqw; }
+.evidence--fact .evidence__tag, .compare__side--known .evidence__tag { color: var(--fact); }
+.evidence--gap .evidence__tag, .compare__side--missing .evidence__tag { color: var(--accent); }
+
+/* Trazo que acompaña cada cambio de diapositiva */
+.deck__seam {
+  position: absolute; inset: 0 auto 0 0; width: 18cqw; z-index: 5; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, rgb(229 96 58 / .0) 30%, rgb(229 96 58 / .55) 49%, rgb(255 236 220 / .9) 50%, rgb(229 96 58 / .55) 51%, transparent 70%);
+  mix-blend-mode: screen;
+}
+
+/* Controles */
+.controls {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 18px;
+  padding: 10px 22px calc(10px + env(safe-area-inset-bottom));
+  color: #d8d0c4; opacity: .35; transition: opacity .3s;
+}
+.controls:hover, .controls:focus-within { opacity: 1; }
+.controls__progress { height: 2px; background: rgb(255 255 255 / .16); max-width: 280px; }
+.controls__progress span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--progress, .1667)); transition: transform .7s var(--ease-out); }
+.controls__counter { font: 600 12px/1 var(--label); letter-spacing: .2em; font-variant-numeric: tabular-nums; }
+.controls__buttons { display: flex; gap: 6px; }
+.controls button { display: grid; place-items: center; width: 34px; height: 30px; border: 1px solid rgb(255 255 255 / .22); background: rgb(20 18 16 / .55); cursor: pointer; backdrop-filter: blur(6px); }
+.controls button:hover { border-color: var(--accent); }
+.controls button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.controls svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Sin JavaScript las diapositivas se leen una tras otra */
+@media (scripting: none) {
+  html, body { overflow: auto; }
+  .deck { position: static; width: 100vw; height: auto; container-type: inline-size; }
+  .slide { position: relative; visibility: visible; aspect-ratio: 16 / 9; }
+  .controls { display: none; }
+}
